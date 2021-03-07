@@ -16,14 +16,5 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
-        buttonAccion.setOnClickListener {
-            viewModel.getProducts()
-        }
-
-        viewModel.allProducts.observe(this, {
-            Log.e("abel", it.toString())
-        })
     }
 }

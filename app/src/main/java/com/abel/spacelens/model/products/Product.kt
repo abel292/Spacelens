@@ -1,5 +1,7 @@
 package com.abel.spacelens.model.products
 
+import java.io.Serializable
+
 data class Product(
     val address: String,
     val attachment: Attachment,
@@ -25,4 +27,4 @@ data class Product(
     val story_img: Any,
     val story_url: Any,
     val title: String
-)
+): Serializable
