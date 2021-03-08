@@ -4,7 +4,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.abel.spacelens.R
 import com.bumptech.glide.Glide
@@ -40,23 +44,9 @@ internal class CustomRendered(
             )
         })
         val icon: Bitmap = mIconGenerator.makeIcon(cluster?.size.toString())
+        mIconGenerator.setContentView(mImageView)
         return BitmapDescriptorFactory.fromBitmap(icon)
 
-    }
-
-    override fun onBeforeClusterItemRendered(
-        item: ProductItemMarker,
-        markerOptions: MarkerOptions
-    ) {
-        /*mImageView.setImageResource(R.drawable.ic_avatar_default_product)
-        val icon = mIconGenerator.makeIcon()
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon))
-            .title(item.name)
-        mIconGenerator.setBackground(null)
-        mIconGenerator.setContentView(mImageView)*/
-        markerOptions.snippet(item.snippet)
-        markerOptions.title(item.title)
-        super.onBeforeClusterItemRendered(item, markerOptions)
     }
 
     override fun onClusterItemRendered(clusterItem: ProductItemMarker?, marker: Marker?) {
@@ -66,10 +56,10 @@ internal class CustomRendered(
             Glide.with(mImageView.context)
                 .asBitmap()
                 .load(url)
+                .circleCrop()
                 .placeholder(R.drawable.ic_avatar_default_product)
                 .error(R.drawable.ic_avatar_default_product)
                 .override(100, 100)
-                .centerCrop()
                 .into(object : CustomTarget<Bitmap>() {
                     override fun onLoadCleared(placeholder: Drawable?) {
                     }
@@ -79,6 +69,9 @@ internal class CustomRendered(
                         transition: Transition<in Bitmap>?
                     ) {
                         marker?.setIcon(BitmapDescriptorFactory.fromBitmap(resource))
+                        marker?.title = "Producto:  ${clusterItem?.project?.title ?: "Sin nombre"}"
+                        marker?.snippet =
+                            "IR AL DETALLER PRODUCTO"//"Descripcion ${clusterItem?.project?.description ?: "Sin descrcion"}\""
                     }
 
                 })
@@ -99,5 +92,13 @@ internal class CustomRendered(
     fun setMarkersToCluster(toCluster: Boolean) {
         this.shouldCluster = toCluster
     }
+
+    /*  fun populateWindow(){
+          val multiProfile: View = activity.layoutInflater.inflate(R.layout.multi_profile, null)
+          mIconGenerator.setContentView(multiProfile)
+          var mClusterImageView = multiProfile.findViewById<View>(R.id.image) as ImageView
+          mImageView = ImageView(activity)
+          mIconGenerator.setContentView(multiProfile)
+      }*/
 
 }

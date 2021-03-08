@@ -1,7 +1,5 @@
 package com.abel.spacelens.view_ui.fragments.map
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -12,16 +10,17 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import com.abel.spacelens.R
 import com.abel.spacelens.google_map.CustomRendered
 import com.abel.spacelens.google_map.ProductItemMarker
-import com.abel.spacelens.google_map.doAsync
 import com.abel.spacelens.model.products.Product
 import com.abel.spacelens.view_model.ApiViewModel
 import com.abel.spacelens.view_ui.fragments.BaseFragment
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
+import com.abel.spacelens.view_ui.fragments.productList.ProductListFragmentDirections
+import com.abel.spacelens.view_ui.fragments.productList.ProductsListAdapter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -30,7 +29,6 @@ import com.google.android.gms.maps.model.*
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import kotlinx.coroutines.launch
-import java.net.URL
 
 
 class MapFragment : BaseFragment(), OnMapReadyCallback,
@@ -65,6 +63,7 @@ class MapFragment : BaseFragment(), OnMapReadyCallback,
             initListener()
         }
     }
+
 
     override fun init() {
 
@@ -164,8 +163,14 @@ class MapFragment : BaseFragment(), OnMapReadyCallback,
     }
 
     override fun onClusterItemInfoWindowClick(item: ProductItemMarker?) {
-        // Does nothing, but you could go into the user's profile page, for example.
-        Log.e("TAGmapa", "CLICK 2")
+        val direction: NavDirections =
+            MapFragmentDirections.actionMapFragmentToDetailProductFragment2(
+                item?.project!!
+            )
+        /*val extras = FragmentNavigatorExtras(
+            textView to product.title
+        )*/
+        findNavController().navigate(direction)
 
     }
 

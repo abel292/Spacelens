@@ -103,7 +103,4 @@ dependencies {
     // For BottomNavigationView from Material Components
     implementation 'com.google.android.material:material:1.0.0'
 
-    //universalimageloader para cargar imagenes en los marcadores de mapa
-    implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-
 }
