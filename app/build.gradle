@@ -54,6 +54,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    //Google Map
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.maps.android:android-maps-utils:1.0.2'
 
     // navigation
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.0"
@@ -95,4 +99,11 @@ dependencies {
 
     //lottieFiles
     implementation 'com.airbnb.android:lottie:3.4.4'
+
+    // For BottomNavigationView from Material Components
+    implementation 'com.google.android.material:material:1.0.0'
+
+    //universalimageloader para cargar imagenes en los marcadores de mapa
+    implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+
 }

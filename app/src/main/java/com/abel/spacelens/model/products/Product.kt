@@ -1,5 +1,7 @@
 package com.abel.spacelens.model.products
 
+import com.abel.spacelens.google_map.ProductItemMarker
+import com.google.android.gms.maps.model.LatLng
 import java.io.Serializable
 
 data class Product(
@@ -27,4 +29,9 @@ data class Product(
     val story_img: Any,
     val story_url: Any,
     val title: String
-): Serializable
+) : Serializable {
+
+    fun toMarker(): ProductItemMarker {
+        return ProductItemMarker(LatLng(location.latitude, location.longitude), title, this)
+    }
+}

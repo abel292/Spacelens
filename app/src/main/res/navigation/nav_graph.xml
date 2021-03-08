@@ -28,6 +28,16 @@
         app:popUpTo="@id/productListFragment"
         app:popUpToInclusive="true" />
 
+    <action
+        android:id="@+id/actionMapFragment"
+        app:destination="@id/mapFragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"
+        app:popUpTo="@id/mapFragment"
+        app:popUpToInclusive="true" />
+
     <fragment
         android:id="@+id/detailProductFragment"
         android:name="com.abel.spacelens.view_ui.fragments.detailProduct.DetailProductFragment"
@@ -37,5 +47,10 @@
             android:name="ArgProductDetail"
             app:argType="com.abel.spacelens.model.products.Product" />
     </fragment>
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.abel.spacelens.view_ui.fragments.map.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
 
 </navigation>

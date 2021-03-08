@@ -107,7 +107,6 @@ class ProductListFragment : BaseFragment() {
     }
 
     private fun loadRecyclerView() {
-        Log.e("carga recycler", "infinito")
         recyclerViewProduct.setHasFixedSize(true)
         mLayoutManager = LinearLayoutManager(mContext)
         recyclerViewProduct.layoutManager = mLayoutManager
