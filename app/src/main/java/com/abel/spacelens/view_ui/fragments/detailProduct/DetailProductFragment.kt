@@ -1,16 +1,24 @@
 package com.abel.spacelens.view_ui.fragments.detailProduct
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.transition.TransitionInflater
 import com.abel.spacelens.R
+import com.abel.spacelens.google_map.geolocalizacion.GeocoderUtil
 import com.abel.spacelens.model.products.Product
 import com.abel.spacelens.view_ui.fragments.BaseFragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.github.tntkhang.fullscreenimageview.library.FullScreenImageViewActivity
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.smarteist.autoimageslider.SliderAnimations
 import com.smarteist.autoimageslider.SliderView
@@ -31,7 +39,7 @@ class DetailProductFragment : BaseFragment(), OnClickListenerPhoto {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         fragmentView = inflater.inflate(R.layout.fragment_detail_product, container, false)
         sharedElementEnterTransition =
             TransitionInflater.from(context).inflateTransition(android.R.transition.move)
@@ -48,10 +56,7 @@ class DetailProductFragment : BaseFragment(), OnClickListenerPhoto {
     }
 
     override fun init() {
-        val titleRemittances = product.title
-        textViewTitleDetail.text = titleRemittances
-        textViewTitleDetail.transitionName = titleRemittances
-
+        populateView()
         populateViewerImage()
     }
 
@@ -91,4 +96,26 @@ class DetailProductFragment : BaseFragment(), OnClickListenerPhoto {
         startActivity(fullImageIntent)
     }
 
+    private fun populateView() {
+        val titleRemittances = product.title
+        textViewTitleDetail.text = titleRemittances
+        textViewTitleDetail.transitionName = titleRemittances
+        textViewPrice.text = product.price.toString()
+        textViewCurrency.text = product.currency
+        textViewCategory.text = product.category
+        textViewCondition.text = product.p_condition
+        textViewPayMethod.text = product.payment_method
+        textViewDescripcion.text = product.description
+
+        val addressName = mContext?.let {
+            GeocoderUtil(it).getCityName(
+                LatLng(
+                    product.location.latitude,
+                    product.location.longitude
+                )
+            )
+        }
+
+        textViewUbicacion.text = addressName ?: ""
+    }
 }
