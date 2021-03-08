@@ -103,4 +103,11 @@ dependencies {
     // For BottomNavigationView from Material Components
     implementation 'com.google.android.material:material:1.0.0'
 
+    //autoimageslider
+    //implementation 'com.github.smarteist:autoimageslider:1.4.0-appcompat'
+    implementation 'com.github.smarteist:autoimageslider:1.4.0'
+
+    //full screen images
+    implementation 'com.github.tntkhang:full-screen-image-view-library:1.1.0'
+
 }
