@@ -6,18 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".view_ui.MainActivity">
 
+    <include
+        android:id="@+id/include"
+        layout="@layout/toolbar_ubic" />
+
     <fragment
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/heigth_tab_menu"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toBottomOf="@id/bottom_navigation"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navGraph="@navigation/nav_graph"
-        android:layout_marginBottom="@dimen/heigth_tab_menu"/>
+        app:layout_constraintTop_toBottomOf="@+id/include"
+        app:navGraph="@navigation/nav_graph" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

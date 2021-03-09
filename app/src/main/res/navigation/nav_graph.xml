@@ -13,10 +13,10 @@
         <action
             android:id="@+id/action_productListFragment_to_detailProductFragment"
             app:destination="@id/detailProductFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
 
     <action
@@ -42,19 +42,38 @@
         android:id="@+id/detailProductFragment"
         android:name="com.abel.spacelens.view_ui.fragments.detailProduct.DetailProductFragment"
         android:label="fragment_detail_product"
-        tools:layout="@layout/fragment_detail_product" >
+        tools:layout="@layout/fragment_detail_product">
         <argument
             android:name="ArgProductDetail"
             app:argType="com.abel.spacelens.model.products.Product" />
+        <action
+            android:id="@+id/action_detailProductFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.abel.spacelens.view_ui.fragments.map.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" >
+        tools:layout="@layout/fragment_map">
         <action
             android:id="@+id/action_mapFragment_to_detailProductFragment2"
-            app:destination="@id/detailProductFragment" />
+            app:destination="@id/detailProductFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+        <argument
+            android:name="SearchLocationArg"
+            android:defaultValue="@null"
+            app:argType="com.abel.spacelens.model.products.Location"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_mapFragment_to_detailProductFragment"
+            app:destination="@id/detailProductFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
 
 </navigation>

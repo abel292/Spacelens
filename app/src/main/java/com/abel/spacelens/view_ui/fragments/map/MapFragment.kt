@@ -7,20 +7,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.abel.spacelens.R
 import com.abel.spacelens.google_map.CustomRendered
 import com.abel.spacelens.google_map.ProductItemMarker
+import com.abel.spacelens.google_map.geolocalizacion.GeocoderUtil
+import com.abel.spacelens.model.products.Location
 import com.abel.spacelens.model.products.Product
 import com.abel.spacelens.view_model.ApiViewModel
+import com.abel.spacelens.view_ui.MainActivity
 import com.abel.spacelens.view_ui.fragments.BaseFragment
-import com.abel.spacelens.view_ui.fragments.productList.ProductListFragmentDirections
-import com.abel.spacelens.view_ui.fragments.productList.ProductsListAdapter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -28,13 +27,12 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
+import kotlinx.android.synthetic.main.toolbar_ubic.*
 import kotlinx.coroutines.launch
 
 
 class MapFragment : BaseFragment(), OnMapReadyCallback,
     ClusterManager.OnClusterClickListener<ProductItemMarker>,
-    ClusterManager.OnClusterInfoWindowClickListener<ProductItemMarker>,
-    ClusterManager.OnClusterItemClickListener<ProductItemMarker>,
     ClusterManager.OnClusterItemInfoWindowClickListener<ProductItemMarker> {
 
     private val viewModel by lazy { ViewModelProviders.of(this).get(ApiViewModel::class.java) }
@@ -44,12 +42,18 @@ class MapFragment : BaseFragment(), OnMapReadyCallback,
     private val markersProjects: MutableList<ProductItemMarker> = ArrayList()
     private var loadedMarkers = false
     private var allProducts: List<Product>? = null
+    private var location: Location? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val args = requireArguments()
+        location = MapFragmentArgs.fromBundle(args).SearchLocationArg
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         fragmentView = inflater.inflate(R.layout.fragment_map, container, false)
         return fragmentView
@@ -57,6 +61,7 @@ class MapFragment : BaseFragment(), OnMapReadyCallback,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         if (!loadedMarkers) {
             initObservables()
             init()
@@ -71,30 +76,26 @@ class MapFragment : BaseFragment(), OnMapReadyCallback,
             childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment?
         mapFragment!!.getMapAsync(this)
 
-        if (checkIfLocationOpened()) {
-            //initMyCity()
-        } else {
-            Toast.makeText(
-                mActivity,
-                getString(R.string.activar_ubicacion),
-                Toast.LENGTH_SHORT
-            ).show()
+        mActivity?.let { activity ->
+            val main = activity as MainActivity
+            main.setBottomNavigationVisibility(View.VISIBLE)
         }
+
     }
 
     override fun initObservables() {
 
-        viewModel.allProducts.observe(viewLifecycleOwner, Observer {
+        viewModel.allProducts.observe(viewLifecycleOwner, {
             try {
                 if (mMap != null) {
                     if (it != null) {
                         allProducts = it
-
                         if (it.isNotEmpty() && !loadedMarkers) {
                             populateMap()
                             addItems(it)
                             loadedMarkers = true
                         }
+                        goToLocationMap()
                     }
                 }
             } catch (e: Exception) {
@@ -151,25 +152,11 @@ class MapFragment : BaseFragment(), OnMapReadyCallback,
         return true
     }
 
-    override fun onClusterInfoWindowClick(cluster: Cluster<ProductItemMarker?>?) {
-        // Does nothing, but you could go to a list of the users.
-        Log.e("TAGmapa", "CLICK 3")
-
-    }
-
-    override fun onClusterItemClick(item: ProductItemMarker?): Boolean {
-        Log.e("TAGmapa", "CLICK")
-        return false
-    }
-
     override fun onClusterItemInfoWindowClick(item: ProductItemMarker?) {
         val direction: NavDirections =
             MapFragmentDirections.actionMapFragmentToDetailProductFragment2(
                 item?.project!!
             )
-        /*val extras = FragmentNavigatorExtras(
-            textView to product.title
-        )*/
         findNavController().navigate(direction)
 
     }
@@ -182,10 +169,7 @@ class MapFragment : BaseFragment(), OnMapReadyCallback,
         mMap?.setOnMarkerClickListener(mClusterManager)
         mMap?.setOnInfoWindowClickListener(mClusterManager)
         mClusterManager.setOnClusterClickListener(this)
-        mClusterManager.setOnClusterInfoWindowClickListener(this)
-        mClusterManager.setOnClusterItemClickListener(this)
         mClusterManager.setOnClusterItemInfoWindowClickListener(this)
-        //allProjects?.let { addItems(it) }
         mClusterManager.cluster()
 
     }
@@ -214,5 +198,40 @@ class MapFragment : BaseFragment(), OnMapReadyCallback,
             mClusterManager.addItem(item)
             markersProjects.add(item)
         }
+    }
+
+    private fun goToLocationMap() {
+        if (location != null) {
+            val coordenates = LatLng(location!!.latitude, location!!.longitude)
+            mMap?.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    coordenates,
+                    21f
+                )
+            )
+            mActivity?.let { activity ->
+                val main = activity as MainActivity
+                main.populateToolbarSearched(coordenates)
+            }
+        } else {
+            goToMyLastLocationMap()
+        }
+    }
+
+    private fun goToMyLastLocationMap() {
+        try {
+            val geocoderUtil = mContext?.let { GeocoderUtil(it) }
+            geocoderUtil?.getLastKnownLocation {
+                mMap?.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        it,
+                        3f
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("Error", e.message.toString())
+        }
+
     }
 }

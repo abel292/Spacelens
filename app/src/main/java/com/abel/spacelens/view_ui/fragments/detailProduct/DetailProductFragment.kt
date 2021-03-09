@@ -8,11 +8,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import com.abel.spacelens.R
 import com.abel.spacelens.google_map.geolocalizacion.GeocoderUtil
 import com.abel.spacelens.model.products.Product
+import com.abel.spacelens.view_ui.MainActivity
 import com.abel.spacelens.view_ui.fragments.BaseFragment
+import com.abel.spacelens.view_ui.fragments.map.MapFragmentDirections
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -30,6 +34,7 @@ class DetailProductFragment : BaseFragment(), OnClickListenerPhoto {
 
     lateinit var product: Product
     lateinit var mAdapterSlide: SlideGalleryAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val args = requireArguments()
@@ -58,12 +63,22 @@ class DetailProductFragment : BaseFragment(), OnClickListenerPhoto {
     override fun init() {
         populateView()
         populateViewerImage()
+
+        mActivity?.let { activity ->
+            val main = activity as MainActivity
+            main.setBottomNavigationVisibility(View.GONE)
+        }
     }
 
     override fun initObservables() {
     }
 
     override fun initListener() {
+        cardMap.setOnClickListener {
+            val direction: NavDirections =
+                DetailProductFragmentDirections.actionMapFragment(product.location)
+            findNavController().navigate(direction)
+        }
     }
 
     private fun populateViewerImage() {
@@ -72,6 +87,8 @@ class DetailProductFragment : BaseFragment(), OnClickListenerPhoto {
 
         product.gallery.forEach {
             val imageUrl = it.src
+            //Primero agrego imagen principal
+            mAdapterSlide.addItem(product.attachment.thumbnail)
             mAdapterSlide.addItem(imageUrl)
         }
         slidesImageView.setSliderAdapter(mAdapterSlide)
@@ -117,5 +134,6 @@ class DetailProductFragment : BaseFragment(), OnClickListenerPhoto {
         }
 
         textViewUbicacion.text = addressName ?: ""
+
     }
 }

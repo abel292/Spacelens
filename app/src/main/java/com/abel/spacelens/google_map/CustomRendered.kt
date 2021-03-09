@@ -36,7 +36,7 @@ internal class CustomRendered(
     private val mIconGenerator = IconGenerator(context)
 
 
-    override fun getDescriptorForCluster(cluster: Cluster<ProductItemMarker>?): BitmapDescriptor {
+   /*override fun getDescriptorForCluster(cluster: Cluster<ProductItemMarker>?): BitmapDescriptor {
         mIconGenerator.setBackground(context?.let {
             ContextCompat.getDrawable(
                 it,
@@ -47,7 +47,7 @@ internal class CustomRendered(
         mIconGenerator.setContentView(mImageView)
         return BitmapDescriptorFactory.fromBitmap(icon)
 
-    }
+    }*/
 
     override fun onClusterItemRendered(clusterItem: ProductItemMarker?, marker: Marker?) {
         super.onClusterItemRendered(clusterItem, marker)
@@ -71,7 +71,7 @@ internal class CustomRendered(
                         marker?.setIcon(BitmapDescriptorFactory.fromBitmap(resource))
                         marker?.title = "Producto:  ${clusterItem?.project?.title ?: "Sin nombre"}"
                         marker?.snippet =
-                            "IR AL DETALLER PRODUCTO"//"Descripcion ${clusterItem?.project?.description ?: "Sin descrcion"}\""
+                            "CLICK PARA VER EL PRODUCTO COMPLETO"//"Descripcion ${clusterItem?.project?.description ?: "Sin descrcion"}\""
                     }
 
                 })
@@ -93,12 +93,5 @@ internal class CustomRendered(
         this.shouldCluster = toCluster
     }
 
-    /*  fun populateWindow(){
-          val multiProfile: View = activity.layoutInflater.inflate(R.layout.multi_profile, null)
-          mIconGenerator.setContentView(multiProfile)
-          var mClusterImageView = multiProfile.findViewById<View>(R.id.image) as ImageView
-          mImageView = ImageView(activity)
-          mIconGenerator.setContentView(multiProfile)
-      }*/
 
 }

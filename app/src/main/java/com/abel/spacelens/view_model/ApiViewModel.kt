@@ -40,9 +40,10 @@ class ApiViewModel(application: Application) :
     }
 
     override fun onError(msg: String) {
-
+        //por tiempo no pude implementar esto
     }
 
     override fun onError(errorType: ErrorType) {
+        //por tiempo no pude implementar esto
     }
 }

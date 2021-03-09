@@ -2,7 +2,6 @@ package com.abel.spacelens.view_ui.fragments.productList
 
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,32 +11,29 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater
 import com.abel.spacelens.R
 import com.abel.spacelens.model.products.Product
 import com.abel.spacelens.utils.OnLoadMoreListener
 import com.abel.spacelens.view_model.ApiViewModel
+import com.abel.spacelens.view_ui.MainActivity
 import com.abel.spacelens.view_ui.fragments.BaseFragment
 import kotlinx.android.synthetic.main.fragment_product_list.*
 import kotlinx.coroutines.launch
-import kotlin.collections.ArrayList
+
 
 class ProductListFragment : BaseFragment() {
 
     val viewModel by lazy { ViewModelProviders.of(this).get(ApiViewModel::class.java) }
-
     private var mAdapter: ProductsListAdapter? = null
     private var mLayoutManager: LinearLayoutManager? = null
     private var loadedList: Boolean = false
-
     private lateinit var productsLoadeds: ArrayList<Product?>
     private lateinit var allProducts: ArrayList<Product?>
-
-
     private var handler: Handler? = null
     private var attempts = 0
-
     private val more = 20
     private val cantFirstLoad = 20
 
@@ -64,6 +60,10 @@ class ProductListFragment : BaseFragment() {
     }
 
     override fun init() {
+        mActivity?.let { activity ->
+            val main = activity as MainActivity
+            main.populateToolbarDefault()
+        }
         getProducts()
         if (loadedList) {
             loadRecyclerView()
@@ -72,6 +72,12 @@ class ProductListFragment : BaseFragment() {
             a_progress_loading.visibility = View.VISIBLE
             a_progress_loading.playAnimation()
         }
+
+        mActivity?.let { activity ->
+            val main = activity as MainActivity
+            main.setBottomNavigationVisibility(View.VISIBLE)
+        }
+
 
     }
 
@@ -90,12 +96,9 @@ class ProductListFragment : BaseFragment() {
                 loadDataFirst()
                 loadRecyclerView()
             }
-
             a_progress_loading.pauseAnimation()
             a_progress_loading.progress = 0f
             a_progress_loading.visibility = View.GONE
-
-
         })
 
     }
@@ -108,7 +111,8 @@ class ProductListFragment : BaseFragment() {
 
     private fun loadRecyclerView() {
         recyclerViewProduct.setHasFixedSize(true)
-        mLayoutManager = LinearLayoutManager(mContext)
+        val numberOfColumns = 2
+        mLayoutManager = GridLayoutManager(mContext, numberOfColumns)//LinearLayoutManager(mContext)
         recyclerViewProduct.layoutManager = mLayoutManager
         mAdapter =
             ProductsListAdapter(
@@ -190,12 +194,7 @@ class ProductListFragment : BaseFragment() {
     private val productoItemListener = ProductsListAdapter.OnClickListener { product, textView ->
         val direction: NavDirections =
             ProductListFragmentDirections.actionProductListFragmentToDetailProductFragment(product)
-
-        val extras = FragmentNavigatorExtras(
-            textView to product.title
-        )
-
-        findNavController().navigate(direction, extras)
+        findNavController().navigate(direction)
     }
 
 }
